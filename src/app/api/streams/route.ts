@@ -6,8 +6,21 @@ export async function GET() {
    return NextResponse.json(streams);
 }
 
+// export async function POST(req: NextRequest) {
+//    const data = await req.json();
+//    const newStream = await createStream(data);
+//    return NextResponse.json(newStream, { status: 201 });
+// }
 export async function POST(req: NextRequest) {
-   const data = await req.json();
-   const newStream = await createStream(data);
-   return NextResponse.json(newStream, { status: 201 });
+   try {
+      const data = await req.json();
+      const newStream = await createStream(data);
+      return NextResponse.json(newStream, { status: 201 });
+   } catch (error) {
+      console.error('STREAMS POST ERROR:', error); // <--- SEE THE ERROR IN TERMINAL
+      return NextResponse.json(
+         { error: "Internal Server Error" },
+         { status: 500 }
+      );
+   }
 }
