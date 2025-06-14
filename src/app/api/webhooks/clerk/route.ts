@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
    const payload = await req.text()
-   const headerPayload = await headers() // ✅ Await it!
+   const headerPayload = await headers()
 
    const svix = new Webhook(process.env.CLERK_WEBHOOK_SECRET || "")
 
@@ -29,18 +29,37 @@ export async function POST(req: Request) {
             data: {
                clerkUserId: data.id,
                username: data.username ?? `${data.first_name}-${data.last_name}` ?? "user",
-               imageUrl: data.image_url,
+               imageUrl: data.image_url || "",
                bio: "", // <- Required, set a default
             },
          })
          console.log("New user:", data.id)
          break
+
       case "user.updated":
+         await prisma.user.updateMany({
+            where: { clerkUserId: data.id },
+            data: {
+               username: data.username || undefined,
+               imageUrl: data.image_url || undefined
+            }
+         })
          console.log("Updated user:", data)
          break
+
       case "user.deleted":
+         await prisma.user.deleteMany({ where: { clerkUserId: data.id } })
          console.log("Deleted user:", data)
          break
+
+      case "session.created":
+         console.log("Session created", data.id)
+         break;
+
+      case "session.ended":
+         console.log("Session ended", data.id)
+         break;
+
       default:
          console.log("Unhandled event:", type)
    }

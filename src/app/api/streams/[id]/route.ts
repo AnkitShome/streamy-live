@@ -14,5 +14,5 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
    await deleteStream(params.id);
-   return NextResponse({ deleted: true });
+   return NextResponse.json({ deleted: true });
 }
