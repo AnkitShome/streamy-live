@@ -18,7 +18,7 @@ export const getSelf = async () => {
 }
 
 export const getRecommendedUsers = async (currentUserId: string) => {
-   return prisma.user.findMany({
+   const users = await prisma.user.findMany({
       where: { id: { not: currentUserId } },
       take: 5,
       select: {
@@ -28,6 +28,8 @@ export const getRecommendedUsers = async (currentUserId: string) => {
          stream: { select: { isLive: true } }
       }
    })
+   console.log(users)
+   return users
 }
 
 export const getFollowingUsers = async (currentUserId: string) => {
