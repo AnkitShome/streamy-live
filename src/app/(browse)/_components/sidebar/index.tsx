@@ -1,14 +1,15 @@
-// "use client";
+"use client";
 
 import { Menu, ArrowLeftToLine } from "lucide-react";
 import { useSidebarStore } from "@/store/sidebar-store";
 import { Recommended } from "./recommended";
+import { Following } from "./following"
 
-export const Sidebar = () => {
+export const Sidebar = ({ following, recommended }) => {
    const { isOpen, toggle, close } = useSidebarStore();
 
    return (
-      <div
+      <aside
          className={`${isOpen ? "w-72" : "w-16"
             } transition-all duration-300 ease-in-out bg-slate-800 text-white h-full flex flex-col border-r border-slate-700`}
       >
@@ -29,8 +30,9 @@ export const Sidebar = () => {
          </div>
          {/* Recommended users section */}
          <div className="flex-1 overflow-y-auto p-4">
-            <Recommended isOpen={isOpen} />
+            <Recommended isOpen={isOpen} users={following} />
+            <Following isOpen={isOpen} users={recommended} />
          </div>
-      </div>
+      </aside>
    );
 };

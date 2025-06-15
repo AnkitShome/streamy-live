@@ -29,3 +29,25 @@ export const getRecommendedUsers = async (currentUserId: string) => {
       }
    })
 }
+
+export const getFollowingUsers = async (currentUserId: string) => {
+   const follows = await prisma.follow.findMany({
+      where: { followerId: currentUserId },
+      select: { followingId: true }
+   })
+
+   const followingIds = follows.map((f) => f.followingId)
+
+   if (!followingIds.length) return [];
+
+   return prisma.user.findMany({
+      where: { id: { in: followingIds } },
+      select: {
+         id: true,
+         username: true,
+         imageUrl: true,
+         stream: { select: { isLive: true } }
+      }
+   })
+
+}
