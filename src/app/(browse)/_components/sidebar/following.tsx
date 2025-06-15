@@ -4,7 +4,7 @@ export const Following = ({ isOpen, users = [] }) => {
 
    return (
       <div>
-         {isOpen && <h2 className="text-base font-semibold text-slate-200 mb-2 pl-1">Following</h2>}
+         {isOpen && <h2 className="text-base font-semibold text-slate-400 mb-2 pl-1">Following</h2>}
          <ul className="space-y-3">
             {users.map(user => (
                <li key={user.id} className="flex items-center">

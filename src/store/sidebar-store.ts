@@ -1,15 +1,25 @@
-import { create } from "zustand"
+// store/sidebar-store.ts
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface SidebarState {
-   isOpen: boolean
-   toggle: () => void
-   open: () => void
-   close: () => void
+   isOpen: boolean;
+   toggle: () => void;
+   open: () => void;
+   close: () => void;
 }
 
-export const useSidebarStore = create<SidebarState>((set) => ({
-   isOpen: true,
-   toggle: () => set((state) => ({ isOpen: !state.isOpen })),
-   open: () => set({ isOpen: true }),
-   close: () => set({ isOpen: false }),
-}))
+// Now uses localStorage under the hood
+export const useSidebarStore = create<SidebarState>()(
+   persist(
+      (set) => ({
+         isOpen: true,
+         toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+         open: () => set({ isOpen: true }),
+         close: () => set({ isOpen: false }),
+      }),
+      {
+         name: "sidebar-storage", // The key in localStorage
+      }
+   )
+);
