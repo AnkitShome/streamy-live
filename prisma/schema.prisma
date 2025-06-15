@@ -14,21 +14,46 @@ datasource db {
 }
 
 model User {
-   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-   username    String   @unique
+   id          String  @id @default(auto()) @map("_id") @db.ObjectId
+   username    String  @unique
    imageUrl    String?
-   clerkUserId String   @unique
+   clerkUserId String  @unique
    bio         String?
-   createdAt   DateTime @default(now())
-   updatedAt   DateTime @updatedAt
+
+   stream Stream?
+
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+   streamId  String?  @db.ObjectId
 }
 
 model Stream {
-   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-   title       String
-   description String?
-   videoUrl    String?
-   userId      String
-   createdAt   DateTime  @default(now())
-   updatedAt   DateTime?
+   id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+   name                String
+   thumbnailUrl        String?
+   ingressId           String? @unique
+   serverUrl           String?
+   streamKey           String?
+   isLive              Boolean @default(false)
+   isChatEnabled       Boolean @default(true)
+   isChatDelayed       Boolean @default(false)
+   isChatFollowersOnly Boolean @default(false)
+
+   userId String @unique
+   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+}
+
+model Follow {
+   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+   followerId  String
+   followingId String
+   createdAt   DateTime @default(now())
+   updatedAt   DateTime @updatedAt
+
+   @@unique([followerId, followingId])
+   @@index([followerId])
+   @@index([followingId])
 }
