@@ -1,10 +1,13 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export const getSelf = async () => {
 
    const self = await currentUser()
-   if (!self) throw new Error("Unauthorized")
+   if (!self) {
+      redirect("/sign-in"); // Instead of throw new Error
+   }
 
    const user = await prisma.user.findUnique({
       where: { clerkUserId: self.id }
@@ -28,7 +31,7 @@ export const getRecommendedUsers = async (currentUserId: string) => {
          stream: { select: { isLive: true } }
       }
    })
-   console.log(users)
+   // console.log(users)
    return users
 }
 

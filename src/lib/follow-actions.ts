@@ -1,52 +1,115 @@
 import { getSelf } from "./user-actions";
 import { prisma } from "./prisma";
 
-export const isFollowing = async ({ id }: { id: string }) => {
+export const isFollowingUser = async ({ id }: { id: string }) => {
 
-   const self = await getSelf();
-   if (!self) return false; //logged out
+   try {
+      const self = await getSelf();
+      if (!self) return false; //logged out
 
-   if (self.id === id) return true
+      const otherUser = await prisma.user.findUnique({
+         where: { id }
+      })
 
-   const following = await prisma.follow.findFirst({
-      where: {
-         followerId: self.id,
-         followingId: id
-      }
-   })
+      if (!otherUser) throw new Error("User not found")
 
-   return !!following
+      if (otherUser.id === self.id) return true
+
+      const following = await prisma.follow.findFirst({
+         where: {
+            followerId: self.id,
+            followingId: id
+         }
+      })
+
+      return !!following
+   } catch {
+      return false
+   }
 }
 
 export const followUser = async ({ id }: { id: string }) => {
    const self = await getSelf()
+
    if (!self) throw new Error("Unauthorized")
+
    if (self.id === id) throw new Error("Cannot follow yourself")
 
-   const already = await prisma.follow.findFirst({
+   const otherUser = await prisma.user.findUnique({
+      where: { id }
+   })
+
+   if (!otherUser) throw new Error("User not found")
+
+   const alreadyFollowed = await prisma.follow.findFirst({
       where: {
          followerId: self.id,
          followingId: id
       }
    })
-   if (already) return; // or throw new Error("Already following")
+   if (alreadyFollowed) throw new Error("Already following")
 
-   await prisma.follow.create({
+   const follow = await prisma.follow.create({
       data: {
          followerId: self.id,
          followingId: id
       }
    })
+
+   return follow
 }
 
 export const unfollowUser = async ({ id }: { id: string }) => {
+
    const self = await getSelf()
+
    if (!self) throw new Error("Unauthorized")
 
-   await prisma.follow.deleteMany({
+   const otherUser = await prisma.user.findUnique({
+      where: { id }
+   });
+
+   if (!otherUser) throw new Error("User not found")
+
+   if (otherUser.id === self.id) throw new Error("Cannot unfollow yourself")
+
+   const existingFollow = await prisma.follow.findFirst({
       where: {
          followerId: self.id,
-         followingId: id
+         followingId: otherUser.id
       }
    })
+
+   if (!existingFollow) throw new Error("Not following")
+
+   const follow = await prisma.follow.delete({
+      where: {
+         id: existingFollow.id
+      },
+   })
+
+   return follow
+}
+
+export const getFollowedUsers = async () => {
+   try {
+      const self = await getSelf();
+
+      if (!self) throw new Error("Unauthorized")
+
+      const follows = await prisma.follow.findMany({
+         where: { followerId: self.id }
+      });
+
+      const followingIds = follows.map(f => f.followingId)
+
+      const users = await prisma.user.findMany({
+         where: { id: { in: followingIds } }
+      })
+
+      return users;
+
+   } catch (error) {
+      throw error
+   }
 }

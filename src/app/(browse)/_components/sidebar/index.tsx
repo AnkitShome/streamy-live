@@ -10,7 +10,7 @@ export const Sidebar = ({ following, recommended }) => {
 
    return (
       <aside
-         className={`${isOpen ? "w-72" : "w-20"
+         className={`${isOpen ? "w-72" : "w-17"
             } transition-all duration-300 ease-in-out bg-slate-800 text-white h-full flex flex-col border-r border-slate-700`}
       >
          {/* Header with toggle buttons */}
@@ -31,7 +31,7 @@ export const Sidebar = ({ following, recommended }) => {
          {/* Recommended users section */}
          <div className="flex-1 overflow-y-auto pr-2">
             <Recommended isOpen={isOpen} users={recommended} />
-            <Following isOpen={isOpen} users={following} />
+            {/* <Following isOpen={isOpen} users={following} /> */}
          </div>
       </aside>
    );

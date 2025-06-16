@@ -3,22 +3,21 @@
 import Link from "next/link";
 import { UserAvatar } from "./userAvatar";
 
-export const Recommended = ({ isOpen, users = [], loading }) => {
-   if (loading) return <div className="text-slate-400">Loading following...</div>;
+export const Recommended = ({ isOpen, users = [] }) => {
    if (!users.length) return null;
 
    return (
       <div>
          {isOpen && (
-            <h2 className="text-base font-semibold text-slate-400 mb-2 pl-1">Recommended</h2>
+            <h2 className="text-base font-semibold text-slate-400 mb-2 pl-1 pb-1">Recommended</h2>
          )}
-         <ul className="space-y-3">
+         <ul className="space-y-3 my-2">
             {users.map((user) => (
                <li key={user.id}>
                   <Link
                      href={`/${user.username}`} // Or `/user/${user.id}` if you use ids
                      className="
-                flex items-center group rounded-lg px-2 py-1 transition
+                flex items-center group rounded-lg pl-2 py-1 transition
                 hover:shadow-lg hover:bg-slate-700/60
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
               "

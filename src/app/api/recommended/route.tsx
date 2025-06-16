@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSelf, getRecommendedUsers } from "@/actions/authActions";
+import { getSelf, getRecommendedUsers } from "@/lib/user-actions";
 
 export async function GET() {
    const user = await getSelf();
