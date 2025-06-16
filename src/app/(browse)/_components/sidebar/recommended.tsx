@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { UserAvatar } from "./UserAvatar";
+import { UserAvatar } from "./userAvatar";
 
-export const Recommended = ({ isOpen, users = [] }) => {
+export const Recommended = ({ isOpen, users = [], loading }) => {
+   if (loading) return <div className="text-slate-400">Loading following...</div>;
    if (!users.length) return null;
 
    return (

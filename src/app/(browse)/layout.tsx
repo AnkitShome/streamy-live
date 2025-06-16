@@ -14,7 +14,7 @@ const BrowseLayout = ({ children }: { children: React.ReactNode }) => {
             <SidebarServer />
 
             {/* Main content with independent scrolling */}
-            <main className="flex-1 overflow-y-auto p-6 bg-white">{children}</main>
+            <main className="flex-1 overflow-y-auto p-6 bg-slate-800/95">{children}</main>
          </div>
       </div>
    )

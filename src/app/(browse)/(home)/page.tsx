@@ -4,20 +4,20 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function HomePage() {
-   const { isSignedIn } = useUser();
+   const { isSignedIn, isLoaded } = useUser();
    const router = useRouter();
 
    useEffect(() => {
-      if (!isSignedIn) {
+      if (isLoaded && !isSignedIn) {
          router.push("/sign-in");
       }
-   }, [isSignedIn]);
+   }, [isLoaded, isSignedIn]);
 
-   if (!isSignedIn) return null;
+   if (!isLoaded) return null;      // <-- Wait for Clerk to load
+   if (!isSignedIn) return null;    // <-- You could show a spinner here instead
 
    return (
       <div>
-         {/* Your homepage content here */}
          <SignedIn>
             <UserButton afterSignOutUrl="/sign-in" />
          </SignedIn>
