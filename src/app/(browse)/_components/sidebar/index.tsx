@@ -31,7 +31,7 @@ export const Sidebar = ({ following, recommended }) => {
          {/* Recommended users section */}
          <div className="flex-1 overflow-y-auto pr-2">
             <Recommended isOpen={isOpen} users={recommended} />
-            {/* <Following isOpen={isOpen} users={following} /> */}
+            <Following isOpen={isOpen} users={following} />
          </div>
       </aside>
    );

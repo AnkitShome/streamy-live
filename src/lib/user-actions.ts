@@ -2,6 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { getFollowedUsers } from "./follow-actions";
 
 export const getSelf = async () => {
 
@@ -32,11 +33,16 @@ export async function getUserByUsername(username: string) {
 
 
 export const getRecommendedUsers = async () => {
-   const user = await getSelf()
-   if (!user) return []
-   const currentUserId = user.id
+
+   const self = await getSelf()
+   if (!self) throw new Error("Unauthorized")
+
+   const following = await getFollowedUsers();
+   const followingIds = following.map(f => f.id)
+   const currentUserId = self.id
+
    const users = await prisma.user.findMany({
-      where: { id: { not: currentUserId } },
+      where: { id: { not: currentUserId, notIn: followingIds } },
       take: 5,
       select: {
          id: true,
@@ -48,40 +54,40 @@ export const getRecommendedUsers = async () => {
    return users
 }
 
-export const getFollowingUsers = async (currentUserId: string) => {
-   const follows = await prisma.follow.findMany({
-      where: { followerId: currentUserId },
-      select: { followingId: true }
+// export const getFollowingUsers = async (currentUserId: string) => {
+//    const follows = await prisma.follow.findMany({
+//       where: { followerId: currentUserId },
+//       select: { followingId: true }
+//    })
+
+//    const followingIds = follows.map((f) => f.followingId)
+
+//    if (!followingIds.length) return [];
+
+//    return prisma.user.findMany({
+//       where: { id: { in: followingIds } },
+//       select: {
+//          id: true,
+//          username: true,
+//          imageUrl: true,
+//          stream: { select: { isLive: true } }
+//       }
+//    })
+
+// }
+
+export const getSelfByUsername = async (username: string) => {
+   const self = await currentUser();
+
+   if (!self || !self.username) throw new Error("Unauthorized")
+
+   const user = await prisma.user.findUnique({
+      where: { username }
    })
 
-   const followingIds = follows.map((f) => f.followingId)
+   if (!user) throw new Error("User not found")
 
-   if (!followingIds.length) return [];
-
-   return prisma.user.findMany({
-      where: { id: { in: followingIds } },
-      select: {
-         id: true,
-         username: true,
-         imageUrl: true,
-         stream: { select: { isLive: true } }
-      }
-   })
-
-}
-
-export const getSelfByUsername=async(username:string)=>{
-   const self=await currentUser();
-
-   if(!self || !self.username)   throw new Error("Unauthorized")
-
-   const user=await prisma.user.findUnique({
-      where:{username}
-   })
-
-   if(!user)   throw new Error("User not found")
-   
-   if(self.username!==user.username)   throw new Error("Unauthorized")
+   if (self.username !== user.username) throw new Error("Unauthorized")
 
    return user
 }

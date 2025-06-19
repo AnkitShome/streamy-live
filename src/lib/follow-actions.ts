@@ -104,7 +104,14 @@ export const getFollowedUsers = async () => {
       const followingIds = follows.map(f => f.followingId)
 
       const users = await prisma.user.findMany({
-         where: { id: { in: followingIds } }
+         where: { id: { in: followingIds } },
+
+         select: {
+            id: true,
+            username: true,
+            imageUrl: true,
+            stream: { select: { isLive: true } }
+         }
       })
 
       return users;

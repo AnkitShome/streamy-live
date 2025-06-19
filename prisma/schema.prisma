@@ -28,12 +28,14 @@ model User {
 }
 
 model Stream {
-   id                  String  @id @default(auto()) @map("_id") @db.ObjectId
-   name                String
-   thumbnailUrl        String?
-   ingressId           String? @unique
-   serverUrl           String?
-   streamKey           String?
+   id           String  @id @default(auto()) @map("_id") @db.ObjectId
+   name         String
+   thumbnailUrl String?
+
+   ingressId String? @unique
+   serverUrl String?
+   streamKey String?
+
    isLive              Boolean @default(false)
    isChatEnabled       Boolean @default(true)
    isChatDelayed       Boolean @default(false)
