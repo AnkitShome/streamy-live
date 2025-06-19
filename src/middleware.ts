@@ -1,7 +1,7 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 
 export default clerkMiddleware((auth, req) => {
-   // console.log("Clerk middleware running for:", req.nextUrl.pathname);
+   console.log("Clerk middleware running for:", req.nextUrl.pathname);
 });
 
 export const config = {
