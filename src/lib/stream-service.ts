@@ -5,5 +5,5 @@ export const getStreamByUserId = async (userId: string) => {
       where: { userId }
    })
 
-   return stream
+   return stream;
 }

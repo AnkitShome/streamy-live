@@ -26,8 +26,8 @@ export const ToggleCard = ({ label, value = false, field }: ToggleCardProps) => 
    })
 
    return (
-      <div className="rounded-xl bg-slate-500/100 text-slate-200 p-6">
-         <div className="flex items-center justify-between gap-x-2">
+      <div className={`rounded-xl bg-slate-500/100 text-slate-200 p-6 ${value ? "bg-slate-300" : "bg-slate-600/60"}`}>
+         <div className="flex items-center justify-between gap-x-2 ">
             <p className="font-semibold">{label}</p>
             <div className="mt-1">
                <Switch
@@ -45,6 +45,6 @@ export const ToggleCard = ({ label, value = false, field }: ToggleCardProps) => 
 
 export const ToggleCardSkeleton = () => {
    return (
-      <Skeleton className="rounded-xl bg-slate-500/100 w-full" />
+      <Skeleton className="rounded-xl bg-slate-500/20 w-full h-29" />
    )
 }
