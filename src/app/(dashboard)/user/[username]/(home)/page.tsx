@@ -1,8 +1,8 @@
-import { getSelfByUsername } from "@/lib/user-actions"
+
+const CreatorPage = () => {
 
 
-const CreatorPage=()=>{
-   return(
+   return (
       <div>
          Creator Page
       </div>

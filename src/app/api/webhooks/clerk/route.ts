@@ -31,6 +31,12 @@ export async function POST(req: Request) {
                username: data.username ?? `${data.first_name}-${data.last_name}` ?? "user",
                imageUrl: data.image_url || "",
                bio: "", // <- Required, set a default
+               stream: {
+                  create: {
+                     title: `${data.username}'s stream`,
+                     ingressId: crypto.randomUUID(),
+                  }
+               }
             },
          })
          console.log("New user:", data.id)

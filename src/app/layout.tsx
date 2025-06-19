@@ -1,4 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import { Toaster } from "sonner";
+
 import './globals.css';
 import { orbitron, inter } from "./fonts";
 
@@ -9,6 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <ClerkProvider>
          <html lang="en" className={`${inter.variable}`}>
             <body>
+               <Toaster position="top-right" />
                {children}
             </body>
          </html>

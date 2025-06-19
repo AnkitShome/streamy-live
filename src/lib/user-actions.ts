@@ -9,7 +9,6 @@ export const getSelf = async () => {
    const self = await currentUser()
    // console.log(self)
    if (!self) {
-      return null;
       redirect("/sign-in"); // Instead of throw new Error
    }
 
@@ -18,7 +17,9 @@ export const getSelf = async () => {
    })
 
    if (!user) {
-      throw new Error("Not found")
+      // Don't auto-create, instead redirect or show a user-friendly error
+      throw new Error("Well creating user but seems clerk got issue")
+      // redirect("/sign-in"); // or handle gracefully
    }
    return user;
 
@@ -35,7 +36,11 @@ export async function getUserByUsername(username: string) {
 export const getRecommendedUsers = async () => {
 
    const self = await getSelf()
-   if (!self) throw new Error("Unauthorized")
+   // if (!self) throw new Error("Unauthorized")
+   if (!self) {
+      redirect("/sign-in"); // Instead of throw new Error
+   }
+
 
    const following = await getFollowedUsers();
    const followingIds = following.map(f => f.id)
