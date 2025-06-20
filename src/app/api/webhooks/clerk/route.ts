@@ -2,6 +2,7 @@ import { Webhook } from "svix"
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(req: Request) {
    const payload = await req.text()
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
                stream: {
                   create: {
                      title: `${data.username}'s stream`,
-                     ingressId: crypto.randomUUID(),
+                     ingressId: uuidv4(),
                   }
                }
             },

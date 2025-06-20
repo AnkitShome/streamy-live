@@ -26,6 +26,14 @@ const roomService = new RoomServiceClient(
 
 const ingressClient = new IngressClient(process.env.LIVEKIT_API_URL!)
 
+const ingressTypeMap: Record<string | number, IngressInput> = {
+   "0": IngressInput.RTMP_INPUT,
+   0: IngressInput.RTMP_INPUT,
+   "2": IngressInput.WHIP_INPUT,
+   2: IngressInput.WHIP_INPUT,
+};
+
+
 export const resetIngresses = async (hostIdentity: string) => {
    const ingresses = await ingressClient.listIngress({
       roomName: hostIdentity,
@@ -50,6 +58,10 @@ export const createIngress = async (ingressType: IngressInput) => {
    //reset prev ingress
    await resetIngresses(self.id)
 
+
+   const mappedType = ingressTypeMap[ingressType];
+   if (mappedType === undefined) throw new Error("Invalid ingress type")
+
    const options: CreateIngressOptions = {
       name: self.username,
       roomName: self.id,
@@ -57,7 +69,7 @@ export const createIngress = async (ingressType: IngressInput) => {
       participantIdentity: self.id,
    }
 
-   if (ingressType === IngressInput.WHIP_INPUT) {
+   if (mappedType === IngressInput.WHIP_INPUT) {
       options.bypassTranscoding = true
    }
    else {
@@ -90,5 +102,9 @@ export const createIngress = async (ingressType: IngressInput) => {
    })
 
    revalidatePath(`/user/${self.username}/key`)
-   return ingress
+   return {
+      ingressId: ingress.ingressId,
+      url: ingress.url,
+      streamKey: ingress.streamKey
+   }
 }

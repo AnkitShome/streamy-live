@@ -1,5 +1,7 @@
 "use client"
 
+import { AlertTriangle } from "lucide-react";
+import { useState, useTransition, useRef } from "react";
 import {
    Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog"
@@ -12,13 +14,28 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { createIngress } from "@/actions/ingress";
+import { toast } from "sonner";
+
+import { RTMP, WHIP } from "@/app/constants/ingress-types";
+
+type IngressType = typeof RTMP | typeof WHIP;
 
 export const ConnectModel = () => {
+   const closeRef = useRef<React.ElementRef<"button">>(null)
+   const [ingressType, setIngressType] = useState<IngressType>(RTMP)
+   const [isPending, startTransition] = useTransition()
 
-   // const closeRef = useRef<ElementRef<"button">>(null);
-   // const [isPending, startTransition] = useTransition();
-   // const [ingressType, setIngressType] = useState<IngressType>(RTMP);
+   const onSubmit = () => {
+      startTransition(() => {
+         createIngress(parseInt(ingressType))
+            .then(() => {
+               toast.success("Ingress created")
+               closeRef?.current?.click();
+            })
+            .catch(() => toast.error("Something went wrong"))
+      })
+   }
 
    return (
       <Dialog>
@@ -31,13 +48,17 @@ export const ConnectModel = () => {
                   Generate connection
                </DialogTitle>
             </DialogHeader>
-            <Select>
+            <Select
+               value={ingressType}
+               onValueChange={(value) => setIngressType(value)}
+               disabled={isPending}
+            >
                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Ingress type" />
                </SelectTrigger>
                <SelectContent>
-                  <SelectItem value="RTMP">RTMP</SelectItem>
-                  <SelectItem value="WHIP">WHIP</SelectItem>
+                  <SelectItem value={RTMP}>RTMP</SelectItem>
+                  <SelectItem value={WHIP}>WHIP</SelectItem>
                </SelectContent>
             </Select>
             <Alert>
@@ -49,12 +70,14 @@ export const ConnectModel = () => {
                </AlertDescription>
             </Alert>
             <div className="flex justify-between">
-               <DialogClose asChild>
+               <DialogClose ref={closeRef} asChild>
                   <Button variant="ghost">Cancel</Button>
                </DialogClose>
                <Button
-                  onClick={() => { }}
-                  variant="stream">
+                  disabled={isPending}
+                  onClick={onSubmit}
+                  variant="stream"
+               >
                   Generate
                </Button>
             </div>
