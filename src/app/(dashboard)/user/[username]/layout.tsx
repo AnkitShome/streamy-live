@@ -4,23 +4,23 @@ import { Navbar } from "./_components/navbar";
 import { Sidebar } from "./_components/sidebar";
 
 
-interface CreatorLayoutProps{
-   params:{username:string};
-   children:React.ReactNode;
+interface CreatorLayoutProps {
+   params: { username: string };
+   children: React.ReactNode;
 }
 
-const CreatorLayout=async({params,children}:CreatorLayoutProps)=>{
+const CreatorLayout = async ({ params, children }: CreatorLayoutProps) => {
    // const {username}=await params;
+   const resolvedParams = await params
+   const self = await getSelfByUsername(resolvedParams.username)
 
-   const self=await getSelfByUsername(params.username)
-   
-   if(!self)   redirect("/")
+   if (!self) redirect("/")
 
-   return(
+   return (
       <div className="flex flex-col h-screen">
-         <Navbar/>
+         <Navbar />
          <div className="flex h-full min-h-screen bg-slate-700">
-            <Sidebar/>
+            <Sidebar />
             {children}
          </div>
       </div>

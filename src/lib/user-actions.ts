@@ -28,7 +28,16 @@ export const getSelf = async () => {
 export async function getUserByUsername(username: string) {
    return prisma.user.findUnique({
       where: { username },
-      select: { id: true, username: true }
+      include: { stream: true }
+   });
+}
+
+export async function getUserById(id:string){
+   return prisma.user.findUnique({
+      where:{id},
+      include:{
+         stream:true
+      }
    })
 }
 
