@@ -13,7 +13,7 @@ export function UserAvatar({
    username,
    isLive = false,
    size = "md",
-   showBadge = false,
+   showBadge = true,
 }: {
    imageUrl: string;
    username: string;

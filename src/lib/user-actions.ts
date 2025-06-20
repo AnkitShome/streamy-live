@@ -48,38 +48,16 @@ export const getRecommendedUsers = async () => {
 
    const users = await prisma.user.findMany({
       where: { id: { not: currentUserId, notIn: followingIds } },
-      take: 5,
       select: {
          id: true,
          username: true,
          imageUrl: true,
          stream: { select: { isLive: true } }
-      }
+      },
    })
    return users
 }
 
-// export const getFollowingUsers = async (currentUserId: string) => {
-//    const follows = await prisma.follow.findMany({
-//       where: { followerId: currentUserId },
-//       select: { followingId: true }
-//    })
-
-//    const followingIds = follows.map((f) => f.followingId)
-
-//    if (!followingIds.length) return [];
-
-//    return prisma.user.findMany({
-//       where: { id: { in: followingIds } },
-//       select: {
-//          id: true,
-//          username: true,
-//          imageUrl: true,
-//          stream: { select: { isLive: true } }
-//       }
-//    })
-
-// }
 
 export const getSelfByUsername = async (username: string) => {
    const self = await currentUser();
