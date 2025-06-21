@@ -9,6 +9,29 @@ body,
    height: 100%;
 }
 
+html,
+body,
+#__next,
+#root {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+   overflow: hidden;
+}
+
+:fullscreen {
+   width: 100vw !important;
+   height: 100vh !important;
+   max-width: 100vw !important;
+   max-height: 100vh !important;
+}
+
+:fullscreen video {
+   width: 100vw !important;
+   height: 100vh !important;
+   object-fit: contain;
+}
+
 .hidden-scrollbar {
    -ms-overflow-style: none;
    scrollbar-width: none;

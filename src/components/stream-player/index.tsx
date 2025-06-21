@@ -22,7 +22,7 @@ export const StreamPlayer = ({
    }
 
    return (
-      <div className="h-screen w-screen">
+      <div className="h-full w-full">
          <LiveKitRoom
             token={token}
             serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_WS_URL!}
