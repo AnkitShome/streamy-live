@@ -8,7 +8,7 @@ interface FullScreenControlProps {
 
 export const FullScreenControl = ({ isFullScreen, onToggle }: FullScreenControlProps) => {
 
-   const Icon = isFullScreen ? Maximize : Minimize;
+   const Icon = isFullScreen ? Minimize : Maximize;
    const label = isFullScreen ? "Exit Full screen" : "Full screen";
 
    return (
