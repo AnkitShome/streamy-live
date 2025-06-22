@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { UserAvatar } from "./userAvatar"
+import { UserAvatar } from "../../../../components/userAvatar"
 
 export const Following = ({ isOpen, users = [] }) => {
    if (!users.length) return null

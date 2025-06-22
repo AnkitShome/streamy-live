@@ -62,7 +62,7 @@ export const ChatForm = ({
                isFollowersOnly={isFollowersOnly}
             />
             <div className="flex space-x-2">
-               <div className="w-full">
+               <div className="w-full mb-2">
                   <Input
                      onChange={(e) => onChange(e.target.value)}
                      value={value}

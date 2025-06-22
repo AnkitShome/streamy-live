@@ -9,6 +9,8 @@ import { useChatSidebar } from "@/store/use-chat-sidebar"
 import { Chat } from "./chat"
 import { Button } from "@/components/ui/button"
 import { MessageSquare, X } from "lucide-react"
+import { ChatHeader } from "./chat-header"
+import { Header } from "./header"
 
 interface StreamPlayerProps {
    user: User & { stream: Stream | null }
@@ -31,23 +33,16 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
       )
    }
 
-   // Chat sidebar width (can adjust as needed)
-   const chatWidth = "w-80 lg:w-96" // 320px/384px
+   const chatWidth = "w-80 lg:w-96"
 
    return (
-      <div className="h-full w-full bg-gray-900 relative overflow-hidden">
-         <LiveKitRoom token={token} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_WS_URL!} className="h-full w-full">
-            <div className="flex h-full w-full">
-               {/* --- Video Container --- */}
-               <div
-                  className={cn(
-                     "relative flex-1 h-full transition-all duration-300",
-                     // Remove the black bg; let video fill space
-                     // Also remove "w-full" which could fight flex-1
-                  )}
-               >
+      <div className="h-full w-full bg-gray-900 relative overflow-hidden flex flex-col">
+         {/* --- Main video+chat area and header are both inside LiveKitRoom now! --- */}
+         <LiveKitRoom token={token} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_WS_URL!} className="flex-1 flex flex-col min-h-0">
+            <div className="flex flex-1 min-h-0">
+               {/* Video */}
+               <div className={cn("relative flex-1 h-full min-h-0 transition-all duration-300 overflow-auto")}>
                   <Video hostName={user.username} hostIdentity={user.id} />
-                  {/* --- Chat Toggle Button (overlay on video, only if chat is closed) --- */}
                   {collapsed && (
                      <Button
                         onClick={onExpand}
@@ -60,33 +55,16 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                      </Button>
                   )}
                </div>
-
-               {/* --- Chat Sidebar --- */}
+               {/* Chat Sidebar */}
                <div
                   className={cn(
-                     "flex flex-col h-full transition-all duration-300 bg-gray-800 border-l border-gray-700 overflow-hidden",
+                     "flex flex-col h-full min-h-0 transition-all duration-300 bg-gray-800 border-l border-gray-700 overflow-hidden",
                      collapsed ? "w-0 min-w-0 opacity-0 pointer-events-none" : `${chatWidth} min-w-[320px] opacity-100`
                   )}
                >
-                  {/* Mount chat only when open to prevent rendering issues */}
                   {!collapsed && (
                      <>
-                        {/* Chat Header */}
-                        <div className="flex items-center justify-between p-3 border-b border-gray-700 bg-gray-800">
-                           <div className="flex items-center space-x-2">
-                              <MessageSquare className="h-4 w-4 text-gray-400" />
-                              <span className="text-white font-medium text-sm">Stream Chat</span>
-                           </div>
-                           <Button
-                              onClick={onCollapse}
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
-                           >
-                              <X className="h-4 w-4" />
-                           </Button>
-                        </div>
-                        {/* Chat Component */}
+                        <ChatHeader onCollapse={onCollapse} />
                         <div className="flex-1 min-h-0">
                            <Chat
                               viewerName={name}
@@ -102,7 +80,20 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                   )}
                </div>
             </div>
+            {/* --- Header is now INSIDE the LiveKitRoom context --- */}
+            <div className="w-full bg-gray-800 border-t border-gray-700 px-4 py-2">
+               <Header
+                  hostName={user.username}
+                  hostIdentity={user.id}
+                  viewerIdentity={identity}
+                  imageUrl={user.imageUrl}
+                  isFollowing={isFollowing}
+                  name={stream.title}
+                  isLive={stream.isLive}
+               />
+            </div>
          </LiveKitRoom>
+         {/* Optionally: more content here */}
       </div>
-   )
+   );
 }
