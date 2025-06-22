@@ -36,8 +36,6 @@ export const Chat = ({
 
    const isHidden = !isChatEnabled || !isOnline
 
-   console.log("Hidden ", isHidden)
-
    const [value, setValue] = useState("");
 
    const { chatMessages: messages, send } = useChat();

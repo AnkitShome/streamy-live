@@ -30,15 +30,13 @@ export const isFollowingUser = async ({ id }: { id: string }) => {
 
 export const followUser = async ({ id }: { id: string }) => {
    const self = await getSelf()
-
    if (!self) throw new Error("Unauthorized")
-
    if (self.id === id) throw new Error("Cannot follow yourself")
 
    const otherUser = await prisma.user.findUnique({
-      where: { id }
+      where: { id },
+      select: { id: true, username: true, imageUrl: true }
    })
-
    if (!otherUser) throw new Error("User not found")
 
    const alreadyFollowed = await prisma.follow.findFirst({
@@ -56,21 +54,22 @@ export const followUser = async ({ id }: { id: string }) => {
       }
    })
 
-   return follow
+   // Return both follow and user info for the toast
+   return {
+      follow,
+      following: otherUser
+   }
 }
 
 export const unfollowUser = async ({ id }: { id: string }) => {
-
    const self = await getSelf()
-
    if (!self) throw new Error("Unauthorized")
 
    const otherUser = await prisma.user.findUnique({
-      where: { id }
-   });
-
+      where: { id },
+      select: { id: true, username: true, imageUrl: true }
+   })
    if (!otherUser) throw new Error("User not found")
-
    if (otherUser.id === self.id) throw new Error("Cannot unfollow yourself")
 
    const existingFollow = await prisma.follow.findFirst({
@@ -79,17 +78,18 @@ export const unfollowUser = async ({ id }: { id: string }) => {
          followingId: otherUser.id
       }
    })
-
    if (!existingFollow) throw new Error("Not following")
 
-   const follow = await prisma.follow.delete({
-      where: {
-         id: existingFollow.id
-      },
+   await prisma.follow.delete({
+      where: { id: existingFollow.id }
    })
 
-   return follow
+   // Return user info for the toast
+   return {
+      following: otherUser
+   }
 }
+
 
 export const getFollowedUsers = async () => {
    try {

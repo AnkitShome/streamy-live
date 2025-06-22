@@ -1,26 +1,30 @@
-"use client"
+"use client";
 
-import { useViewerToken } from "@/hooks/use-viewer-token"
-import { LiveKitRoom } from "@livekit/components-react"
-import type { User, Stream } from "@prisma/client"
-import { cn } from "@/lib/utils"
-import { Video } from "./video"
-import { useChatSidebar } from "@/store/use-chat-sidebar"
-import { Chat } from "./chat"
-import { Button } from "@/components/ui/button"
-import { MessageSquare, X } from "lucide-react"
-import { ChatHeader } from "./chat-header"
-import { Header } from "./header"
+import { useViewerToken } from "@/hooks/use-viewer-token";
+import { LiveKitRoom } from "@livekit/components-react";
+import type { User, Stream } from "@prisma/client";
+import { cn } from "@/lib/utils";
+import { Video } from "./video";
+import { useChatSidebar } from "@/store/use-chat-sidebar";
+import { Chat } from "./chat";
+import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
+import { ChatHeader } from "./chat-header";
+import { Header } from "./header";
 
 interface StreamPlayerProps {
-   user: User & { stream: Stream | null }
-   stream: Stream
-   isFollowing: boolean
+   user: User & { stream: Stream | null };
+   stream: Stream;
+   isFollowing: boolean;
 }
 
-export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) => {
-   const { token, name, identity } = useViewerToken(user.id)
-   const { collapsed, onExpand, onCollapse } = useChatSidebar((state) => state)
+export const StreamPlayer = ({
+   user,
+   stream,
+   isFollowing,
+}: StreamPlayerProps) => {
+   const { token, name, identity } = useViewerToken(user.id);
+   const { collapsed, onExpand, onCollapse } = useChatSidebar((state) => state);
 
    if (!token || !name || !identity) {
       return (
@@ -30,18 +34,21 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                <div className="text-gray-400">Cannot watch the stream at this time</div>
             </div>
          </div>
-      )
+      );
    }
 
-   const chatWidth = "w-80 lg:w-96"
+   const chatWidth = "w-80 lg:w-96";
 
    return (
       <div className="h-full w-full bg-gray-900 relative overflow-hidden flex flex-col">
-         {/* --- Main video+chat area and header are both inside LiveKitRoom now! --- */}
-         <LiveKitRoom token={token} serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_WS_URL!} className="flex-1 flex flex-col min-h-0">
+         <LiveKitRoom
+            token={token}
+            serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_WS_URL!}
+            className="flex-1 flex flex-col min-h-0"
+         >
             <div className="flex flex-1 min-h-0">
-               {/* Video */}
-               <div className={cn("relative flex-1 h-full min-h-0 transition-all duration-300 overflow-auto")}>
+               {/* --- Video Section --- */}
+               <div className={cn("relative flex-1 h-full min-h-0 transition-all duration-300 bg-black")}>
                   <Video hostName={user.username} hostIdentity={user.id} />
                   {collapsed && (
                      <Button
@@ -55,17 +62,20 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                      </Button>
                   )}
                </div>
-               {/* Chat Sidebar */}
+               {/* --- Chat Sidebar --- */}
                <div
                   className={cn(
-                     "flex flex-col h-full min-h-0 transition-all duration-300 bg-gray-800 border-l border-gray-700 overflow-hidden",
-                     collapsed ? "w-0 min-w-0 opacity-0 pointer-events-none" : `${chatWidth} min-w-[320px] opacity-100`
+                     "flex flex-col h-full min-h-0 transition-all duration-300 bg-gray-800 border-l border-gray-700",
+                     collapsed
+                        ? "w-0 min-w-0 opacity-0 pointer-events-none"
+                        : `${chatWidth} min-w-[320px] opacity-100`
                   )}
                >
                   {!collapsed && (
                      <>
                         <ChatHeader onCollapse={onCollapse} />
-                        <div className="flex-1 min-h-0">
+                        {/* Make chat grow and scroll */}
+                        <div className="flex-1 min-h-0 flex flex-col">
                            <Chat
                               viewerName={name}
                               hostName={user.username}
@@ -80,7 +90,7 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                   )}
                </div>
             </div>
-            {/* --- Header is now INSIDE the LiveKitRoom context --- */}
+            {/* --- Header Always Visible at Bottom --- */}
             <div className="w-full bg-gray-800 border-t border-gray-700 px-4 py-2">
                <Header
                   hostName={user.username}
@@ -93,7 +103,6 @@ export const StreamPlayer = ({ user, stream, isFollowing }: StreamPlayerProps) =
                />
             </div>
          </LiveKitRoom>
-         {/* Optionally: more content here */}
       </div>
    );
-}
+};

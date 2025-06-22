@@ -46,6 +46,7 @@ export const Actions = ({
       });
    };
 
+
    const toggleFollow = () => {
       if (!userId) {
          return router.push("/sign-in");
