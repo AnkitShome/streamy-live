@@ -1,6 +1,11 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+
+const isApiWebhook = createRouteMatcher(['/api/webhooks/livekit']);
 
 export default clerkMiddleware((auth, req) => {
+   if (isApiWebhook(req)) {
+      return;
+   }
    console.log("Clerk middleware running for:", req.nextUrl.pathname);
 });
 

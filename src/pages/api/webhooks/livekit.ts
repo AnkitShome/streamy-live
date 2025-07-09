@@ -33,6 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const event = await receiver.receive(body, authorization);
+      console.log("📦 LiveKit Webhook Event:", event.event, JSON.stringify(event, null, 2));
+
 
       if (event.event === "ingress_started") {
          const stream = await prisma.stream.update({
@@ -59,6 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                userId: streamer.id,
                // imageUrl: stream.image.imageUrl
             })
+
          }
 
 
@@ -66,12 +69,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       if (event.event === "ingress_ended") {
-         await prisma.stream.update({
+         const stream = await prisma.stream.update({
             where: { ingressId: event.ingressInfo?.ingressId },
             data: { isLive: false },
+            include: { user: true }
          });
-      }
 
+         const streamer = stream.user;
+         const followers = await prisma.follow.findMany({
+            where: { followingId: streamer.id }
+         });
+
+         const io = (global as any).io;
+         for (const follower of followers) {
+            io.to(follower.followerId).emit("stream-ended", {
+               username: streamer.username,
+               userId: streamer.id
+            });
+         }
+
+         // Optionally, also notify the streamer themselves:
+         io.to(streamer.id).emit("stream-ended", {
+            username: streamer.username,
+            userId: streamer.id
+         });
+
+         console.log(`📢 Notified ${followers.length} followers and streamer of stream end`);
+      }
       return res.status(200).send("OK");
    } catch (err) {
       console.error("❌ Webhook processing failed:", err);

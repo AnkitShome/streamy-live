@@ -16,8 +16,7 @@ export const Following = ({ isOpen, users = [] }) => {
 
          <ul className="space-y-3">
             {users.map((user) => {
-               const isLive = user.stream?.isLive
-               // || liveUserIds.includes(user.id);
+               const isLive = user.stream?.isLive || liveUserIds.includes(user.id);
 
                return (
                   <li key={user.id}>
