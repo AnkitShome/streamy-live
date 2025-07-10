@@ -16,12 +16,16 @@ interface StreamPlayerProps {
    user: User & { stream: Stream | null };
    stream: Stream;
    isFollowing: boolean;
+   viewerId: string;
+   viewerName: string;
 }
 
 export const StreamPlayer = ({
    user,
    stream,
    isFollowing,
+   viewerId,
+   viewerName
 }: StreamPlayerProps) => {
    const { token, name, identity } = useViewerToken(user.id);
    const { collapsed, onExpand, onCollapse } = useChatSidebar((state) => state);
@@ -77,7 +81,9 @@ export const StreamPlayer = ({
                         {/* Make chat grow and scroll */}
                         <div className="flex-1 min-h-0 flex flex-col">
                            <Chat
-                              viewerName={name}
+                              // roomId={stream.id}
+                              viewerName={viewerName}
+                              viewerId={viewerId}
                               hostName={user.username}
                               hostIdentity={user.id}
                               isFollowing={isFollowing}

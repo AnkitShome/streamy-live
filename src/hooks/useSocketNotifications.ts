@@ -11,7 +11,7 @@ export const useSocketNotifications = (userId: string) => {
    useEffect(() => {
       if (!userId) return;
 
-      socket.emit("join", userId)
+      socket.emit("joinNotificationRoom", userId)
       console.log("🛜 [Socket] Joined room:", userId);
 
       socket.on("stream-started", (data) => {

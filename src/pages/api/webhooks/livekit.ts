@@ -88,6 +88,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
          }
 
+         await prisma.chatMessage.deleteMany({ where: { roomId: streamer.id } });
+
+
          // Optionally, also notify the streamer themselves:
          io.to(streamer.id).emit("stream-ended", {
             username: streamer.username,

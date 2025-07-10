@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
-import { getUserByUsername } from "@/lib/user-actions";
+import { notFound, redirect } from "next/navigation";
+import { getSelf, getUserByUsername } from "@/lib/user-actions";
 import { isFollowingUser } from "@/lib/follow-actions";
 import { StreamPlayer } from "@/components/stream-player";
 
@@ -19,8 +19,17 @@ const UserPage = async ({ params }: UserPageProps) => {
 
    const isFollowing = await isFollowingUser({ id: user.id });
 
+   const viewer = await getSelf();
+   if (!viewer) redirect("/sign-in")
+
    return (
-      <StreamPlayer user={user} stream={user.stream} isFollowing={isFollowing} />
+      <StreamPlayer
+         user={user}
+         stream={user.stream}
+         isFollowing={isFollowing}
+         viewerId={viewer.id}
+         viewerName={viewer.username}
+      />
    )
 }
 
