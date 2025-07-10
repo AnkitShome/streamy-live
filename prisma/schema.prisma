@@ -60,3 +60,26 @@ model Follow {
    @@index([followerId])
    @@index([followingId])
 }
+
+model ChatMessage {
+   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+   roomId    String //streamer's userId or streamId
+   userId    String //sender
+   content   String
+   createdAt DateTime @default(now())
+   deleted   Boolean  @default(false)
+
+   @@index([roomId])
+}
+
+model Ban {
+   id        String    @id @default(auto()) @map("_id") @db.ObjectId
+   userId    String //banned user
+   roomId    String //stream or channel
+   bannedBy  String //moderator/host who banned
+   reason    String?
+   expiresAt DateTime? //permanent bans optional
+   createdAt DateTime  @default(now())
+
+   @@index([userId, roomId])
+}
