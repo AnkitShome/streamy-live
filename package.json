@@ -43,6 +43,7 @@
       "socket.io": "^4.8.1",
       "socket.io-client": "^4.8.1",
       "sonner": "^2.0.5",
+      "streamifier": "^0.1.1",
       "svix": "^1.67.0",
       "tailwind-merge": "^3.3.0",
       "ts-node": "^10.9.2",
