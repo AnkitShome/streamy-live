@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 import { prisma } from "@/lib/prisma";
 import { getFollowedUsers } from "./follow-actions";
@@ -12,14 +13,24 @@ export const getSelf = async () => {
       redirect("/sign-in"); // Instead of throw new Error
    }
 
-   const user = await prisma.user.findUnique({
+   let user = await prisma.user.findUnique({
       where: { clerkUserId: self.id }
    })
 
    if (!user) {
-      // Don't auto-create, instead redirect or show a user-friendly error
-      throw new Error("Well creating user but seems clerk got issue")
-      // redirect("/sign-in"); // or handle gracefully
+      user=await prisma.user.create({
+         data:{
+            clerkUserId:self.id,
+            username: self.username ?? `${self.firstName}-${self.lastName}` ?? "user",
+            bio:"",
+            stream: {
+                  create: {
+                     title: `${self.username}'s stream`,
+                     ingressId: uuidv4(),
+                  }
+               }
+         }
+      })
    }
    return user;
 

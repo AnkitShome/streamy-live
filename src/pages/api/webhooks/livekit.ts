@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const event = await receiver.receive(body, authorization);
-      console.log("📦 LiveKit Webhook Event:", event.event, JSON.stringify(event, null, 2));
+      // console.log("📦 LiveKit Webhook Event:", event.event, JSON.stringify(event, null, 2));
 
 
       if (event.event === "ingress_started") {
