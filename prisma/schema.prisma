@@ -22,9 +22,10 @@ model User {
 
    stream Stream?
 
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
-   streamId  String?  @db.ObjectId
+   createdAt DateTime    @default(now())
+   updatedAt DateTime    @updatedAt
+   streamId  String?     @db.ObjectId
+   Highlight Highlight[]
 }
 
 model Stream {
@@ -45,8 +46,9 @@ model Stream {
 
    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
+   createdAt DateTime    @default(now())
+   updatedAt DateTime    @updatedAt
+   Highlight Highlight[]
 }
 
 model Follow {
@@ -59,4 +61,21 @@ model Follow {
    @@unique([followerId, followingId])
    @@index([followerId])
    @@index([followingId])
+}
+
+model Highlight {
+   id String @id @default(auto()) @map("_id") @db.ObjectId
+
+   userId   String  @db.ObjectId
+   streamId String? @db.ObjectId
+
+   user   User    @relation(fields: [userId], references: [id])
+   stream Stream? @relation(fields: [streamId], references: [id])
+
+   fileName String
+   url      String
+   start    String
+   end      String
+
+   createdAt DateTime @default(now())
 }

@@ -10,7 +10,8 @@ export const getSelf = async () => {
    const self = await currentUser()
    // console.log(self)
    if (!self) {
-      redirect("/sign-in"); // Instead of throw new Error
+      return null
+      // redirect("/sign-in"); // Instead of throw new Error
    }
 
    let user = await prisma.user.findUnique({
@@ -18,17 +19,17 @@ export const getSelf = async () => {
    })
 
    if (!user) {
-      user=await prisma.user.create({
-         data:{
-            clerkUserId:self.id,
+      user = await prisma.user.create({
+         data: {
+            clerkUserId: self.id,
             username: self.username ?? `${self.firstName}-${self.lastName}` ?? "user",
-            bio:"",
+            bio: "",
             stream: {
-                  create: {
-                     title: `${self.username}'s stream`,
-                     ingressId: uuidv4(),
-                  }
+               create: {
+                  title: `${self.username}'s stream`,
+                  ingressId: uuidv4(),
                }
+            }
          }
       })
    }
@@ -43,11 +44,11 @@ export async function getUserByUsername(username: string) {
    });
 }
 
-export async function getUserById(id:string){
+export async function getUserById(id: string) {
    return prisma.user.findUnique({
-      where:{id},
-      include:{
-         stream:true
+      where: { id },
+      include: {
+         stream: true
       }
    })
 }

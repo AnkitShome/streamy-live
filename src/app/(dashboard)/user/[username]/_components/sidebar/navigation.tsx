@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs"
 import { usePathname } from "next/navigation"
-import { Fullscreen, KeyRound, MessageSquare, Users } from "lucide-react"
+import { Fullscreen, icons, KeyRound, MessageSquare, Scissors, Users } from "lucide-react"
 
 import { NavItem } from "./nav-item"
 
@@ -26,6 +26,11 @@ export const Navigation = ({ isOpen }) => {
          href: `/user/${user?.username}/chat`,
          icon: MessageSquare
       },
+      {
+         label: "Highlights",
+         href: `/user/${user?.username}/vod/highlight`,
+         icon: Scissors
+      }
    ]
 
    // if (!user?.username) {

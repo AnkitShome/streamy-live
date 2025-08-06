@@ -70,7 +70,7 @@ export const Chat = ({
             isDelayed={isChatDelayed}
             isFollowing={isFollowing}
          />
-         Chat
+         {/* Chat */}
 
       </div>
    )
